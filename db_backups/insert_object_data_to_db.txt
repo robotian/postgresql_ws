@@ -1,0 +1,31 @@
+you are a python code expert.  Write a python code. 
+
+1. objective
+   - Read a csv file and insert the data table to a database
+
+
+2. data input file 
+   - file name: objects_table.csv
+   - a datatable with columns: object_id, row_id, x_coord, y_coord, orientation_deg
+   - columns
+     * object_id: a unique id(integer) for a object
+     * row_id: the row_id that the object belongs to
+     * x_coord, y_coord: x-y coordinate of the object
+     * orientation_deg: the orientation of the row line in degree
+     
+3. Database access infomation
+   - database type: postgresql
+   - host: 'localhost'
+   - port: 5432
+   - dbname: 'ros2'
+   - user: 'admin'
+   - password: 'Robotlab2019'
+   
+   
+4. Datatable
+   - table name: 'object_data'
+   - if the table name exists, truncate it. If it does not, create one. 
+     
+   
+   
+

@@ -1,0 +1,87 @@
+you are a python code and graph theory expert.  Write a python code. 
+
+1. Objective
+   - A mobile robot(Clearpath Husky) with a arm (Kinova Gen3 Lite) has a task to pick up objects. I want to generate a directed graph for the robot to go to the position for picking up the objects. The object position and orientation will be given via a database. I will use this directed graph to generate waypoints for Nav2 nagiation_through_poses. 
+   
+2. Database Connection Requirements:
+  - Type: PostgreSQL
+  - Host: localhost
+  - Port: 5432
+  - Database Name: ros2
+  - User: admin
+  - Password: Robotlab2019
+  - Table: object_data
+  
+3. object_data table columns
+  - object_id(Integer, Primary Key): a unique id for an object
+  - row_id(Integer): a row id where the object belongs to
+  - x_coord(Float/Double Precision): x coordinate of the object
+  - y_coord(Float/Double Precision): y coordinate of the object
+  - orientation_deg(Float/Double Precision): orientation of the object
+  
+4. Nodes
+  - There are five types of nodes: Pickup nodes, Entering nodes, Exiting nodes, Via nodes, Staging nodes
+  - All node have an unique id (integer)
+  - All node have x, y position and orientation data
+  - Pickup nodes
+    * position and orientation of the robot (base_link) to pickup an object
+    * The arm base pose (arm_base_link) relative to the base_link should be given in a parameter file, ARM_BASE_POSE = (-0.20, -0.15, 3.14) .
+    * A object position in the arm_base_link should be given in a parameter file, OBJ_POS_ARMBASE = (0.0, 0.3)  
+    * The arm will be located on the right side of the robot (negative y plane of the base_link), and its reach is not large enough to pick up something in the left side. So, for each object, there will be two possible base_link poses. 
+  - Entering nodes
+    * For each row, there will be two sets of pickup nodes. The nodes' orientation of one set will be the same with the orientation of the objects' orientation. And the other set will have +180 degree offset.
+    * Create nodes connecting the first pickup nodes in each set with a given distance, ENTER_OFFSET_DIST =0.8
+    * the node orientation is same with the first pickup node in each set
+  - Exiting nodes
+    * For each row, there will be two sets of pickup nodes. The nodes' orientation of one set will be the same with the orientation of the objects' orientation. And the other set will have +180 degree offset.
+    * Create nodes connecting the last pickup nodes in each set with a given distance, EXIT_OFFSET_DIST = 0.7
+    * the node orientation is same with the last pickup node in each set
+  - Via nodes
+    * Via nodes are positioned along a retangular perimeter such that they enclose Pickup, Entering, and Exiting nodes. VIA_MARGIN=1.5
+    * the distance between adjacent Via nodes roughly identical. VIA_NODE_DIST=1 (meter)
+    * Create two duplicate Via nodes set with same postion 
+    * For each set, nodes' orientation of one set is wrap around in CW direction considering the middle of object pickup area as the center. the other set is in CCW. 
+  - Staging nodes
+    * Poses for three charging stations will be given. DOCK_POSES = [(-5, 1.0, math.pi/2),(-5.3, 9.0, math.pi/3)].
+    * Create a Staging node for each docking_station.
+    * Each Staging node will be located at (0, STAGING_DISTANCE) coordinate in a docking_station coordinate system. 
+    * The orientation is direction the origin of a docking_station coordinate system.
+  
+5. Edges
+  - Pickup edges
+    * For each row, there will be two sets of pickup nodes. The nodes' orientation of one set will be the same with the orientation of the objects' orientation. And the other set will have +180 degree offset. 
+    * Create edges connecting the pickup nodes in each set
+    * each weight is (the distance between nodes)x(PICKUP_EDGE_WEIGHT). PICKUP_EDGE_WEIGHT=3
+  - Entering edges
+    * connecting from the edge node to the first pickup node in each set
+    * each weight is (the distance between nodes)x(INOUT_EDGE_WEIGHT). INOUT_EDGE_WEIGHT=4
+  - Exiting edges
+    * connecting from the last pickup node and the edge node in each set
+    * each weight is (the distance between nodes)x(INOUT_EDGE_WEIGHT). INOUT_EDGE_WEIGHT=4
+  - Via edges
+    * Bidirectional between the Via nodes: edge weight is (the distance between nodes)x(VIA_EDGE_WEIGHT). VIA_EDGE_WEIGHT=1
+    * Each Entering has at least two edge coming from a Via node, one or two from CW Via nodes, and one or two from CCW Via nodes. 
+    * Each Exiting has at least two edge connecting to a Via node, one or two to CW Via nodes, and one or two to CCW Via nodes. 
+  - Staging edges
+    * Connecting to and from Via nodes
+    * Connect as many as possible but Avoid connection acrossing the pickup area 
+    * The weight is (the distance between nodes)x(STAGING_EDGE_WEIGHT). STAGING_EDGE_WEIGHT=2   
+    
+    
+
+6. Output
+  - Nodes and Edges
+  
+7. Display
+  - Show each object pose as black arrows
+  - Show each node as orange arrows 
+  - Show each edges as blue arrows
+  - Show the arm base pose at each node using two arrows (red for x axis, green for y axis)
+  - Show the docking_station poses using two arrows (orange for x axis, cyan for y axis)
+  
+8. library
+  - use plotly for plot
+  - networkx
+  - psycopg2
+  - math
+  - include any library you used

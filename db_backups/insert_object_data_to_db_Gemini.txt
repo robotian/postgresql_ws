@@ -1,0 +1,47 @@
+Act as an expert Python developer and database administrator. Write a Python script that reads a CSV file and efficiently inserts its data into a PostgreSQL database.
+
+1. Database Connection Requirements:
+
+Type: PostgreSQL
+
+Host: localhost
+
+Port: 5432
+
+Database Name: ros2
+
+User: admin
+
+Password: Robotlab2019
+
+2. Table & Schema Management:
+
+Target table name: object
+
+Logic: If the table does not exist, create it. If it already exists, truncate it to remove old data before inserting.
+
+The table should have the following schema based on the CSV:
+
+object_id: Integer, Primary Key
+
+row_id: Integer
+
+x_coord: Float/Double Precision
+
+y_coord: Float/Double Precision
+
+orientation_deg: Float/Double Precision
+
+3. Data Input:
+
+File name: objects_table.csv
+
+Assume the CSV has headers matching the column names above.
+
+4. Code Quality Constraints:
+
+Use the most efficient bulk-insert method available for PostgreSQL (e.g., COPY instead of looping through individual INSERT statements).
+
+Include standard error handling (try/except blocks) and ensure database connections are properly closed in a finally block.
+
+Specify any necessary pip install commands for external dependencies at the top of your response.

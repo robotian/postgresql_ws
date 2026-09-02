@@ -1,0 +1,44 @@
+you are a python code expert.  Write a python code. 
+
+1. objective
+   - there are many objects in an area. The objects are aligned in several rows. The code needs to identity all objects' position in a cartesian coordinate system based on the datatable file input and display them in a plot. In a row, n number of objects are positioned evenly.  
+
+2. datatable file input
+   - file name: harvesting_area_survey.csv
+   - the first row is header. 
+   - header: row_id,num_objects,head_x,head_y,tail_x,tail_y,start_x,start_y,end_x,end_y
+
+3. data info
+   - row_id: indicating the row number
+   - num_objects: number of objects in the row
+   - head_x,head_y: the first point of the row line
+   - tail_x,tail_y: the second point of the row line
+   - start_x,start_y: a point indicating the first object in the row. This point should be projected to the row line
+   - end_x,end_y: a point indicating the last object in the row. This point should be projected to the row line
+   
+4. logic
+   - for each row, find a straight line that starts from (head_x,head_y) and ends at (tail_x,tail_y)
+   - find the first object position in the row by projecting a point (start_x,start_y) to the straight line.
+   - find the last object position in the row by projecting a point (end_x,end_y) to the straight line.
+   - find the rest of the objects in the row
+   
+ 5. output
+   - a datatable with columns: object_id, row_id, x_coord, y_coord, orientation_deg
+   - columns
+     * object_id: a unique id(integer) for a object
+     * row_id: the row_id that the object belongs to
+     * x_coord, y_coord: x-y coordinate of the object
+     * orientation_deg: the orientation of the row line in degree
+     
+ 6. display the result
+   - Use plotly
+   - show the input data as markers: head(red), tail(orange), start(blue), end(green)
+   - show the row lines: red dashed line
+   - show the objects as arrows: start from the object coordinate and directing to the orientation
+   - show the input and output tables in the plot
+   
+ 7. Test
+   - create a test code that generates the input data file and run the code
+   
+   
+
