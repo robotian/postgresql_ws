@@ -48,7 +48,7 @@ def load_csv_to_postgres():
         with open(CSV_FILE, 'r') as f:
             copy_sql = f"""
             COPY "{TABLE_NAME}" (object_id, row_id, x_coord, y_coord, orientation_deg)
-            FROM STDIN WITH CSV HEADER DELIMITER as ','
+            FROM STDIN WITH (FORMAT CSV, HEADER TRUE, DELIMITER ',')
             """
             with cur.copy(copy_sql) as copy:
                 copy.write(f.read())

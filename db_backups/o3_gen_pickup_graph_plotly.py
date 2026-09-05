@@ -7,26 +7,32 @@ import plotly.graph_objects as go
 # Parameter Definitions
 # ==========================================
 # Robot & Arm settings
-ARM_BASE_POSE = (-0.20, -0.15, 3.14) 
-OBJ_POS_ARMBASE = (0.0, 0.3)       
+# ARM_BASE_POSE = (-0.320, -0.160, 3.142)  # A300
+ARM_BASE_POSE = (-0.120, -0.145, 3.142)  # J100
+OBJ_POS_ARMBASE = (0.0, 0.7)  # (x, y) of the object relative to the arm base. Get this from TF from the arm_0_base_link to the camera_optical_frame.
+# OBJ_POS_ARMBASE = (-0.052, 0.533)  # (x, y) of the object relative to the arm base. Get this from TF from the arm_0_base_link to the camera_optical_frame.
 
 # Distances
-ENTER_OFFSET_DIST = 0.8
-EXIT_OFFSET_DIST = 0.7
-VIA_NODE_DIST = 1.0
-VIA_MARGIN = 1.5
-STAGING_DISTANCE = 1.5
+ENTER_OFFSET_DIST = 1.2
+EXIT_OFFSET_DIST = 1.2
+VIA_NODE_DIST = 1.4
+VIA_MARGIN = 0.2
+STAGING_DISTANCE = 2.0
 
 # Edge Weights
 PICKUP_EDGE_WEIGHT = 3.0
 INOUT_EDGE_WEIGHT = 4.0
 VIA_EDGE_WEIGHT = 1.0
 STAGING_EDGE_WEIGHT = 2.0
+ORIENTATION_EDGE_WEIGHT = 3.0  # node angle difference weight factor
 
 # Mock Docking Station Poses (x, y, theta_rad)
 DOCK_POSES = [
-    (-5.0, 1.0, math.pi/2),
-    (-5.3, 9.0, math.pi/3)
+    # (-9.654, -1.972, 1.661- math.pi),        # J100 docking station Lucky Clover
+    (-1.347, 1.588,  -1.628 - math.pi),        # J100 docking station Lucky Clover
+    # (-3.596, 1.604, 0.041- math.pi),        # A300 docking station Lucky Clover
+    # (-14.885, 0.515, 2.836 - math.pi),  # jackal docking station
+    # (-6.052, 2.268, -1.523 + math.pi)   # A300 docking station
 ]
 
 # Database Credentials
@@ -175,6 +181,9 @@ def get_arm_base_world_pose(x_r, y_r, theta_r):
 
 def calc_dist(n1, n2):
     return math.hypot(n2['x'] - n1['x'], n2['y'] - n1['y'])
+
+def calc_angle_diff(n1, n2):
+    return abs(n2['theta'] - n1['theta']) % (2 * math.pi)
 
 def build_navigation_graph(object_data):
     G = nx.DiGraph()
