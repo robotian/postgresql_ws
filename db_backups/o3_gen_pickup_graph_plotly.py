@@ -236,15 +236,18 @@ def build_navigation_graph(object_data):
             node_id_counter += 1
 
             dist = calc_dist(G.nodes[ent_id], pickup_nodes[0])
-            G.add_edge(ent_id, pickup_nodes[0]['id'], weight=dist*INOUT_EDGE_WEIGHT, type='Entering Edge')
+            angle_diff = calc_angle_diff(G.nodes[ent_id], pickup_nodes[0])
+            G.add_edge(ent_id, pickup_nodes[0]['id'], weight=dist*INOUT_EDGE_WEIGHT + angle_diff*ORIENTATION_EDGE_WEIGHT, type='Entering Edge')
             
             for i in range(len(pickup_nodes) - 1):
                 n1, n2 = pickup_nodes[i], pickup_nodes[i+1]
                 dist = calc_dist(n1, n2)
-                G.add_edge(n1['id'], n2['id'], weight=dist*PICKUP_EDGE_WEIGHT, type='Pickup Edge')
-                
+                angle_diff = calc_angle_diff(n1, n2)
+                G.add_edge(n1['id'], n2['id'], weight=dist*PICKUP_EDGE_WEIGHT + angle_diff*ORIENTATION_EDGE_WEIGHT, type='Pickup Edge')
+
             dist = calc_dist(pickup_nodes[-1], G.nodes[ext_id])
-            G.add_edge(pickup_nodes[-1]['id'], ext_id, weight=dist*INOUT_EDGE_WEIGHT, type='Exiting Edge')
+            angle_diff = calc_angle_diff(pickup_nodes[-1], G.nodes[ext_id])
+            G.add_edge(pickup_nodes[-1]['id'], ext_id, weight=dist*INOUT_EDGE_WEIGHT + angle_diff*ORIENTATION_EDGE_WEIGHT, type='Exiting Edge')
 
     # 2. Build Via Nodes
     min_x = min(data['x'] for _, data in G.nodes(data=True)) - VIA_MARGIN
